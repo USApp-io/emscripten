@@ -293,7 +293,15 @@ function JSify(data, functionsOnly) {
         });
       });
       if (VERBOSE) printErr('adding ' + finalName + ' and deps ' + deps + ' : ' + (snippet + '').substr(0, 40));
-      var depsText = (deps ? '\n' + deps.map(addFromLibrary).filter(function(x) { return x != '' }).join('\n') : '');
+      var depsText = "";
+      // We we are including the full library we don't need to worry about
+      // proccing deps because we are including everything anyway.  This also
+      // allows emcc.py:get_all_js_library_funcs to get a full list of JS
+      // library functions without also including stubs of any C functions that
+      // JS functions might alias (e.g. SDL_malloc: "malloc").
+      if (!INCLUDE_FULL_LIBRARY) {
+        depsText = (deps ? '\n' + deps.map(addFromLibrary).filter(function(x) { return x != '' }).join('\n') : '');
+      }
       var contentText;
       if (isFunction) {
         // Emit the body of a JS library function.

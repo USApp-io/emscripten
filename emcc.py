@@ -513,14 +513,16 @@ def get_all_js_library_funcs(temp_files):
   # mode of the js compiler that would generate a list of all possible symbols
   # that could be checked in.
   old_full = shared.Settings.INCLUDE_FULL_LIBRARY
+  old_side = shared.Settings.SIDE_MODULE
   old_linkable = shared.Settings.LINKABLE
   try:
     # Temporarily define INCLUDE_FULL_LIBRARY since we want a full list
     # of all available JS library functions.
     shared.Settings.INCLUDE_FULL_LIBRARY = True
     # Temporarily set LINKABLE so that the jscompiler doesn't report
-    # undefined symbolls itself.
+    # undefined symbols itself.
     shared.Settings.LINKABLE = True
+    shared.Settings.SIDE_MODULE = False
     emscripten.generate_struct_info()
     glue, forwarded_data = emscripten.compile_settings(temp_files)
     forwarded_json = json.loads(forwarded_data)
@@ -537,6 +539,7 @@ def get_all_js_library_funcs(temp_files):
   finally:
     shared.Settings.INCLUDE_FULL_LIBRARY = old_full
     shared.Settings.LINKABLE = old_linkable
+    shared.Settings.SIDE_MODULE = old_side
   return library_fns_list
 
 
@@ -1402,7 +1405,7 @@ There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR P
     if shared.Settings.EMBIND:
       forced_stdlibs.append('libembind')
 
-    if not shared.Settings.MINIMAL_RUNTIME:
+    if not shared.Settings.MINIMAL_RUNTIME and not shared.Settings.BOOTSTRAPPING_STRUCT_INFO:
       # Always need malloc and free to be kept alive and exported, for internal use and other
       # modules
       shared.Settings.EXPORTED_FUNCTIONS += ['_malloc', '_free']
@@ -1471,7 +1474,7 @@ There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR P
       # no longer always bundled in)
       shared.Settings.DEFAULT_LIBRARY_FUNCS_TO_INCLUDE += ['$demangle', '$demangleAll', '$jsStackTrace', '$stackTrace']
 
-    if shared.Settings.FILESYSTEM:
+    if shared.Settings.FILESYSTEM and not shared.Settings.BOOTSTRAPPING_STRUCT_INFO:
       if shared.Settings.SUPPORT_ERRNO:
         shared.Settings.EXPORTED_FUNCTIONS += ['___errno_location'] # so FS can report errno back to C
       # to flush streams on FS exit, we need to be able to call fflush

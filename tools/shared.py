@@ -1797,6 +1797,8 @@ class Building(object):
       if all_external_symbols:
         # Filter out symbols external/JS symbols
         c_exports = [e for e in c_exports if e not in all_external_symbols]
+        if 'main' in c_exports:
+          c_exports.remove('main')
       for export in c_exports:
         cmd += ['--export', export]
 
@@ -1813,7 +1815,7 @@ class Building(object):
       ]
       use_start_function = Settings.STANDALONE_WASM
 
-      if not use_start_function:
+      if '--relocatable' not in opts and not use_start_function:
         has_main = '_main' in Settings.EXPORTED_FUNCTIONS
         if has_main and not Settings.IGNORE_MISSING_MAIN:
           cmd += ['--entry=main']
