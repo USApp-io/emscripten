@@ -1210,6 +1210,7 @@ There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR P
       shared.Settings.STRICT_JS = 1
       shared.Settings.AUTO_JS_LIBRARIES = 0
       shared.Settings.AUTO_ARCHIVE_INDEXES = 0
+      shared.Settings.AUTO_DETECT_MAIN = 0
 
     # If set to 1, we will run the autodebugger (the automatic debugging tool, see
     # tools/autodebugger).  Note that this will disable inclusion of libraries. This
@@ -2909,6 +2910,10 @@ def parse_args(newargs):
       options.shell_path = consume_arg()
     elif check_arg('--source-map-base'):
       options.source_map_base = consume_arg()
+    elif newargs[i] == '--no-entry':
+      if '_main' in shared.Settings.EXPORTED_FUNCTIONS:
+        shared.Settings.EXPORTED_FUNCTIONS.remove('_main')
+      newargs[i] = ''
     elif check_arg('--js-library'):
       shared.Settings.SYSTEM_JS_LIBRARIES.append(os.path.abspath(consume_arg()))
     elif newargs[i] == '--remove-duplicates':

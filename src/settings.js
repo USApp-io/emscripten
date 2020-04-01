@@ -941,10 +941,16 @@ var LINKABLE = 0;
 //   * The C define EMSCRIPTEN is not defined (__EMSCRIPTEN__ always is, and
 //     is the correct thing to use).
 //   * STRICT_JS is enabled.
+//   * AUTO_DETECT_MAIN is disabled.
 //   * AUTO_JS_LIBRARIES is disabled.
 //   * AUTO_ARCHIVE_INDEXES is disabled.
 // [compile+link]
 var STRICT = 0;
+
+// Attempt to export and link against main if it exists but fall back to
+// assuming no main function.   If this is disabled then one must pass either
+// `--no-entry` or an EXPORTED_FUNCTIONS list that doesn't include `_main`.
+var AUTO_DETECT_MAIN = 1;
 
 // Automatically attempt to add archive indexes at link time to archives that 
 // don't already have them.  This can happen when GNU ar or GNU ranlib is used

@@ -920,6 +920,11 @@ def report_missing_symbols(all_implemented, pre):
       continue
     diagnostics.warning('undefined', 'undefined exported function: "%s"', requested)
 
+  # Handle main specially, unless AUTO_DETECT_MAIN is set
+  if not shared.Settings.AUTO_DETECT_MAIN:
+    if '_main' in shared.Settings.EXPORTED_FUNCTIONS and '_main' not in all_implemented:
+      exit_with_error('entry symbol not defined (pass --no-entry to suppress): main')
+
 
 def get_exported_implemented_functions(all_exported_functions, all_implemented, metadata):
   funcs = set(metadata['exports'])
