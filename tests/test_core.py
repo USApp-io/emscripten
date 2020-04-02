@@ -8867,8 +8867,8 @@ NODEFS is no longer included by default; build with -lnodefs.js
   def test_auto_detect_main(self):
     self.do_run_in_out_file_test('tests', 'core', 'test_ctors_no_main')
 
-    # Disabling AUTO_DETECT_MAIN should cause link to fail
-    self.set_setting('AUTO_DETECT_MAIN', 0)
+    # Disabling IGNORE_MISSING_MAIN should cause link to fail due to missing main
+    self.set_setting('IGNORE_MISSING_MAIN', 0)
     err = self.expect_fail([PYTHON, EMCC, path_from_root('tests', 'core', 'test_ctors_no_main.cpp')] + self.get_emcc_args())
     self.assertContained('error: entry symbol not defined (pass --no-entry to suppress): main', err)
 

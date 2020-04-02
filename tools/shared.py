@@ -1815,7 +1815,7 @@ class Building(object):
 
       if not use_start_function:
         has_main = '_main' in Settings.EXPORTED_FUNCTIONS
-        if has_main and not Settings.AUTO_DETECT_MAIN:
+        if has_main and not Settings.IGNORE_MISSING_MAIN:
           cmd += ['--entry=main']
         else:
           cmd += ['--no-entry']
